@@ -42,10 +42,15 @@ public:
 
   u32 Count() const override { return count_; }
 
-  bool Has(u32 index) const override { return sparse_[index] != kEmpty; }
+  bool Has(u32 index) const override {
+    if(index > sparse_.size()) {
+      return false;
+    }
+    return ((index < sparse_.size()) && (sparse_[index] != kEmpty));
+  }
 
   T &Get(u32 index) {
-    assert(sparse_[index] != kEmpty);
+    assert(Has(index));
     return packed_values_[sparse_[index]];
   }
 

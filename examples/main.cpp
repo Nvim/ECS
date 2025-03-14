@@ -1,5 +1,5 @@
-#include "sparse.hpp"
 #include "ecs.hpp"
+#include "sparse.hpp"
 #include <cassert>
 #include <iostream>
 
@@ -65,10 +65,10 @@ void TestECS() {
 }
 
 int main() {
-  std::cout << "Sparse Test\n"; 
+  std::cout << "Sparse Test\n";
   TestSparse();
 
-  std::cout << "ECS Test\n"; 
+  std::cout << "ECS Test\n";
   TestECS();
 
   return 0;
