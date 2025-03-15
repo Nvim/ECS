@@ -58,8 +58,7 @@ void TestECS() {
   assert(e2pos.y == pos2.y);
   assert(e1tr.rotation == tr.rotation);
 
-  std::vector<u32> query{};
-  ecs.Query<Position, Transform>(query);
+  auto query = ecs.Query<Position, Transform>();
   assert(query.size() == 1);
   assert(query.at(0) == e1);
 }

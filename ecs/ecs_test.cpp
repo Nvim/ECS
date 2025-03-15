@@ -74,9 +74,6 @@ TEST(ecs, add_same_component) {
 
 TEST(ecs, query_basic) {
   ECS ecs{};
-  std::vector<u32> result1{};
-  std::vector<u32> result2{};
-
   u32 e1 = ecs.CreateEntity();
   u32 e2 = ecs.CreateEntity();
   Type1 t{22.0f, 0.0f};
@@ -86,8 +83,8 @@ TEST(ecs, query_basic) {
   ecs.AddComponent(e1, Type2{0.0f, 10.0f, 777.8f});
   ecs.AddComponent(e2, Type1{0.3f, 60.8f});
 
-  ecs.Query<Type1, Type2>(result1); // should contain e1
-  ecs.Query<Type1>(result2);        // should contain both e1 and e2
+  auto result1 = ecs.Query<Type1, Type2>(); // should contain e1
+  auto result2 = ecs.Query<Type1>();        // should contain both e1 and e2
 
   EXPECT_EQ(result1.size(), 1);
   EXPECT_EQ(result2.size(), 2);
@@ -111,11 +108,10 @@ TEST(ecs, query_basic) {
 
 TEST(ecs, query_no_result) {
   ECS ecs{};
-  std::vector<u32> res;
 
   u32 e1 = ecs.CreateEntity();
   ecs.AddComponent(e1, Type1{4.0f, 28.5f});
-  ecs.Query<Type2>(res);
+  auto res = ecs.Query<Type2>();
 
   EXPECT_EQ(res.size(), 0);
 }
@@ -159,9 +155,6 @@ TEST(ecs, remove_invalid) {
 
 TEST(ecs, remove_queries) {
   ECS ecs{};
-  std::vector<u32> result1{};
-  std::vector<u32> result2{};
-  std::vector<u32> result3{};
 
   u32 e1 = ecs.CreateEntity();
   u32 e2 = ecs.CreateEntity();
@@ -171,7 +164,7 @@ TEST(ecs, remove_queries) {
   ecs.AddComponent(e2, Type1{0.3f, 60.8f});
   ecs.AddComponent(e2, Type2{1.0f, 101.3f, 747.2f});
 
-  ecs.Query<Type1, Type2>(result1); // should contain both e1 and e2
+  auto result1 = ecs.Query<Type1, Type2>(); // should contain both e1 and e2
 
   // Check that result1 has both entities:
   EXPECT_EQ(result1.size(), 2);
@@ -184,7 +177,7 @@ TEST(ecs, remove_queries) {
 
   // Remove a component from e2 and check that result has only e1:
   ecs.RemoveComponent<Type2>(e2);
-  ecs.Query<Type1, Type2>(result2);
+  auto result2 = ecs.Query<Type1, Type2>();
 
   // Check that result2 has only e1:
   EXPECT_EQ(result2.size(), 1);
@@ -196,7 +189,7 @@ TEST(ecs, remove_queries) {
             result2.end());
 
   // Query only for Type1 and check that we get both e1 and e2:
-  ecs.Query<Type1>(result3);
+  auto result3 = ecs.Query<Type1>();
 
   // Check that result3 has both entities:
   EXPECT_EQ(result3.size(), 2);
@@ -210,24 +203,21 @@ TEST(ecs, remove_queries) {
 
 TEST(ecs, destroy_count_query) {
   ECS ecs{};
-  std::vector<u32> result{};
   auto e1 = ecs.CreateEntity();
   auto e2 = ecs.CreateEntity();
 
   ecs.AddComponent(e1, Type1{20.0f, 4.0f});
   ecs.AddComponent(e2, Type1{22.0f, 6.0f});
-  ecs.Query<Type1>(result);
+  auto result = ecs.Query<Type1>();
 
   EXPECT_EQ(ecs.Count(), 2);
   EXPECT_EQ(result.size(), 2);
 
-  result.clear();
-
   ecs.DestroyEntity(e2);
-  ecs.Query<Type1>(result);
+  auto result2 = ecs.Query<Type1>();
 
   EXPECT_EQ(ecs.Count(), 1);
-  EXPECT_EQ(result.size(), 1);
+  EXPECT_EQ(result2.size(), 1);
 }
 
 TEST(ecs, destroy_access) {
@@ -265,8 +255,6 @@ TEST(ecs, destroy_add_after) {
   EXPECT_TRUE(ecs.HasComponent<Type2>(e2));
   EXPECT_EQ(ecs.GetComponent<Type2>(e2), t2);
 
-  std::vector<u32> res;
-  ecs.Query<Type2>(res);
-
+  auto res = ecs.Query<Type2>();
   EXPECT_EQ(res.size(), 1);
 }

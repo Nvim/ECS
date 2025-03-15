@@ -87,17 +87,18 @@ public:
   }
 
   template <typename... Ts>
-  void Query(std::vector<u32> &result) {
+  std::vector<u32> Query() {
     u32 min_comps = kMaxId;
     u32 min_idx{0};
     std::vector<ISparseSet *> required_pools;
+    std::vector<u32> result{};
 
     // TODO: Sort pools dynamically when component count changes
     // Find smallest pool to iterate:
     for (auto &t : std::vector<std::type_index>{TYPE_IDX(Ts)...}) {
       auto p = pools_.find(t);
       if (p == pools_.end()) {
-        return;
+        return result;
       }
 
       required_pools.push_back(p->second.get());
@@ -121,6 +122,7 @@ public:
         result.push_back(id);
       }
     }
+    return result;
   }
 
 private:
