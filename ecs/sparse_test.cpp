@@ -8,19 +8,18 @@ struct SomeType {
   int a;
   float b;
   std::string str;
+
+  bool operator ==(const SomeType& other) const {
+    return (a == other.a && b == other.b && str == other.str);
+  }
 };
 
-TEST(trivial, init) {
+TEST(primitive, init) {
   SparseSet<f32> s{};
   EXPECT_EQ(s.Count(), 0);
 }
 
-TEST(custom_type, init) {
-  SparseSet<SomeType> s{};
-  EXPECT_EQ(s.Count(), 0);
-}
-
-TEST(trivial, add) {
+TEST(primitive, add) {
   SparseSet<f32> s{};
   s.Add(42, 1.0f);
   EXPECT_EQ(s.Count(), 1);
@@ -35,7 +34,7 @@ TEST(trivial, add) {
   EXPECT_DEBUG_DEATH(s.Add(42, 33.0f), "failed");
 }
 
-TEST(trivial, has) {
+TEST(primitive, has) {
   SparseSet<f32> s{};
   EXPECT_FALSE(s.Has(2));
 
@@ -51,7 +50,7 @@ TEST(trivial, has) {
   EXPECT_TRUE(s.Has(2));
 }
 
-TEST(trivial, get) {
+TEST(primitive, get) {
   SparseSet<unsigned long> s{};
 
   // Test with rvalue litteral:
@@ -67,7 +66,7 @@ TEST(trivial, get) {
   EXPECT_DEBUG_DEATH(s.Get(505), "failed");
 }
 
-TEST(trivial, remove_has) {
+TEST(primitive, remove_has) {
   SparseSet<u32> s{};
   s.Add(1, 800);
   s.Add(8, 4);
@@ -80,7 +79,7 @@ TEST(trivial, remove_has) {
   EXPECT_FALSE(s.Has(1));
 }
 
-TEST(trivial, remove_get) {
+TEST(primitive, remove_get) {
   SparseSet<u32> s{};
   s.Add(1, 800);
   s.Add(8, 4);
@@ -93,7 +92,7 @@ TEST(trivial, remove_get) {
   EXPECT_DEBUG_DEATH(s.Get(1), "failed");
 }
 
-TEST(trivial, remove_count) {
+TEST(primitive, remove_count) {
   SparseSet<u32> s{};
   s.Add(1, 800);
   s.Add(8, 4);
@@ -101,5 +100,48 @@ TEST(trivial, remove_count) {
   s.Remove(8);
   EXPECT_EQ(s.Count(), 1);
   s.Remove(1);
+  EXPECT_EQ(s.Count(), 0);
+}
+
+TEST(custom_type, add_get_has) {
+  SparseSet<SomeType> s{};
+  SomeType a{11, 12.0f, "a"};
+  SomeType b{19, 42.2f, "b"};
+  SomeType c{0, 55.5f, "c"};
+
+  s.Add(1, a);
+  s.Add(2, b);
+  s.Add(3, {0, 55.5f, "c"}); // Test for rvalue too
+
+  EXPECT_EQ(s.Count(), 3);
+
+  EXPECT_TRUE(s.Has(1));
+  EXPECT_TRUE(s.Has(2));
+  EXPECT_TRUE(s.Has(3));
+  for (int i = 4; i < 1000; ++i) {
+    EXPECT_FALSE(s.Has(i));
+  }
+
+  SomeType expect = SomeType{11, 12.0f, "a"};
+  EXPECT_EQ(expect, s.Get(1));
+  expect = SomeType{19, 42.2f, "b"};
+  EXPECT_EQ(expect, s.Get(2));
+  expect = SomeType{0, 55.5f, "c"};
+  EXPECT_EQ(expect, s.Get(3));
+}
+
+TEST(custom_type, remove) {
+  SparseSet<SomeType> s{};
+  SomeType a{11, 12.0f, "a"};
+  SomeType b{19, 42.2f, "b"};
+  s.Add(1, a);
+  s.Add(2, b);
+
+  s.Remove(2);
+  EXPECT_FALSE(s.Has(2));
+  EXPECT_EQ(s.Count(), 1);
+  
+  s.Remove(1);
+  EXPECT_FALSE(s.Has(1));
   EXPECT_EQ(s.Count(), 0);
 }

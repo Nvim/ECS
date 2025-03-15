@@ -19,10 +19,10 @@ Entity IDs are 32 bits unsigned integers. All bits are dedicated to the ID for n
 
 ## TODO
 
-- [ ] Add real unit tests
+- [x] Add real unit tests
 - [ ] Better API for queries (return an iterable `View` type)
 - [ ] ID recycling
-- [ ] Refactor `ecs.hpp` to clean up `typeid` boilerplate
+- [x] Refactor `ecs.hpp` to clean up `typeid` boilerplate
 - [ ] More configurability through defines, or a config struct to pass on init
 - [ ] Try to find cool usages for bitmasks on the IDS
 - [ ] Better demo program

@@ -43,7 +43,7 @@ public:
   u32 Count() const override { return count_; }
 
   bool Has(u32 index) const override {
-    if(index > sparse_.size()) {
+    if (index > sparse_.size()) {
       return false;
     }
     return ((index < sparse_.size()) && (sparse_[index] != kEmpty));
@@ -107,6 +107,10 @@ private:
   std::vector<u32> sparse_;     // external array
 
 public:
+  explicit BaseSparseSet() : sparse_(std::vector<u32>{kSparseBaseLen}) {
+    sparse_.assign(kSparseBaseLen, kEmpty);
+  }
+
   u32 Count() const override { return count_; }
 
   bool Has(u32 index) const override { return sparse_[index] != kEmpty; }
