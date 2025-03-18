@@ -63,12 +63,40 @@ void TestECS() {
   assert(query.at(0) == e1);
 }
 
+void debugme() {
+
+  ECS ecs{};
+  auto e1 = ecs.CreateEntity();
+  auto e2 = ecs.CreateEntity();
+  auto e3 = ecs.CreateEntity();
+
+  ecs.AddComponent(e1, Position{20.0f, 4.0f});
+  ecs.AddComponent(e2, Position{22.0f, 6.0f});
+  ecs.AddComponent(e3, Position{22.0f, 6.0f});
+
+  ecs.AddComponent(e1, Transform{20.0f, 4.0f, 3.0f});
+  ecs.AddComponent(e2, Transform{22.0f, 6.0f, 8.8f});
+  ecs.AddComponent(e3, Transform{22.0f, 6.0f, 67.3f});
+
+  auto result = ecs.Query<Position, Transform>();
+  assert(result.size() == 3);
+
+  ecs.DestroyEntity(e1);
+  auto result2 = ecs.Query<Position, Transform>();
+
+  assert(ecs.Count() == 2);
+  assert(result2.size() == 2);
+}
+
 int main() {
   std::cout << "Sparse Test\n";
   TestSparse();
 
   std::cout << "ECS Test\n";
   TestECS();
+
+  std::cout << "Oui test\n";
+  debugme();
 
   return 0;
 }

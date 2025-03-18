@@ -79,12 +79,10 @@ public:
   void Remove(u32 index) override {
     assert(Has(index));
 
-    u32 remove_id = packed_ids_[sparse_[index]];
-    std::swap(remove_id, packed_ids_.back());
+    std::swap(packed_ids_[sparse_[index]], packed_ids_.back());
     packed_ids_.pop_back();
 
-    auto remove_val = packed_values_[sparse_[index]];
-    std::swap(remove_val, packed_values_.back());
+    std::swap(packed_values_[sparse_[index]], packed_values_.back());
     packed_values_.pop_back();
 
     sparse_[index] = kEmpty;
@@ -128,8 +126,7 @@ public:
   void Remove(u32 index) override {
     assert(Has(index));
 
-    u32 remove_id = packed_ids_[sparse_[index]];
-    std::swap(remove_id, packed_ids_.back());
+    std::swap(packed_ids_[sparse_[index]], packed_ids_.back());
     packed_ids_.pop_back();
 
     sparse_[index] = kEmpty;

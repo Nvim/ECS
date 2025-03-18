@@ -220,6 +220,30 @@ TEST(ecs, destroy_count_query) {
   EXPECT_EQ(result2.size(), 1);
 }
 
+TEST(ecs, destroy_complex) {
+  ECS ecs{};
+  auto e1 = ecs.CreateEntity();
+  auto e2 = ecs.CreateEntity();
+  auto e3 = ecs.CreateEntity();
+
+  ecs.AddComponent(e1, Type1{20.0f, 4.0f});
+  ecs.AddComponent(e2, Type1{22.0f, 6.0f});
+  ecs.AddComponent(e3, Type1{22.0f, 6.0f});
+
+  ecs.AddComponent(e1, Type2{20.0f, 4.0f, 3.0f});
+  ecs.AddComponent(e2, Type2{22.0f, 6.0f, 8.8f});
+  ecs.AddComponent(e3, Type2{22.0f, 6.0f, 67.3f});
+
+  auto result = ecs.Query<Type1, Type2>();
+  EXPECT_EQ(result.size(), 3);
+
+  ecs.DestroyEntity(e1);
+  auto result2 = ecs.Query<Type1, Type2>();
+
+  EXPECT_EQ(ecs.Count(), 2);
+  EXPECT_EQ(result2.size(), 2);
+}
+
 TEST(ecs, destroy_access) {
   ECS ecs{};
   auto e1 = ecs.CreateEntity();
